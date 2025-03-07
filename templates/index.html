@@ -1,0 +1,84 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #5739ce;
+        }
+        #password {
+            font-size: 24px;
+            margin: 20px;
+            padding: 10px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            transition: transform 0.3s;
+        }
+        #generate-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        #generate-btn:hover {
+            background-color: #0056b3;
+        }
+        .animated {
+            animation: bounce 0.5s;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Password Generator</h1>
+    <input type="number" id="length" placeholder="Enter length (6-20)" min="6" max="20">
+    <button id="generate-btn">Generate Password</button>
+    <div id="password"></div>
+
+    <script>
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            const length = document.getElementById('length').value;
+            fetch(`/generate/${length}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Invalid length');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const passwordDiv = document.getElementById('password');
+                    passwordDiv.textContent = data.password;
+                    passwordDiv.classList.add('animated');
+                    setTimeout(() => passwordDiv.classList.remove('animated'), 500);
+                })
+                .catch(error => {
+                    alert(error.message);
+                });
+        });
+    </script>
+</body>
+</html>
